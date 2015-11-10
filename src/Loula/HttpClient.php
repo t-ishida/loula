@@ -9,7 +9,7 @@ class HttpClient {
 
     public function post ($url, $params = null, $files = null)
     {
-        return json_decode($this->sendOne(new HttpRequest('POST', $url, $params, null, $files)));
+        return json_decode($this->sendOne(new HttpRequest('POST', $url, $params, $files)));
     }
 
     public function delete ($url, $params = null)

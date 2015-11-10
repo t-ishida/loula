@@ -26,13 +26,22 @@ abstract class OAuthClient extends HttpClient
     }
 
     public abstract function getEndPoint();
+
+    public function exchangeToken($code)
+    {
+        $this->exchangeCode($code);
+        foreach ($this->observers as $observer) {
+            $observer->changedAccessTokenAt($this->accessToken, $this->refreshToken);
+        }
+    }
+
     public abstract function exchangeCode($code);
 
     public function refreshToken ()
     {
         $this->refreshAccessToken();
         foreach ($this->observers as $observer) {
-            $observer->changedAccessTokenAt();
+            $observer->changedAccessTokenAt($this->accessToken, $this->refreshToken);
         }
     }
     public abstract function refreshAccessToken();
@@ -45,7 +54,7 @@ abstract class OAuthClient extends HttpClient
 
     public function post ($url, $params = null, $files = null)
     {
-        return parent::post($this->buildUrl($url), $params, null, $files);
+        return parent::post($this->buildUrl($url), $params, $files);
     }
 
     public function delete ($url, $params = null)
@@ -55,11 +64,12 @@ abstract class OAuthClient extends HttpClient
 
     public function put ($url, $params = null, $files = null)
     {
-        return parent::put($this->buildUrl($url), $params, null, $files);
+        return parent::put($this->buildUrl($url), $params, $files);
     }
 
     public function sendOne(HttpRequest $request, $throwBadRequest = true)
     {
+        $request->addParam('access_token', $this->accessToken);
         $response = parent::sendOne($request, false);
         if ($response->getHttpCode() === 401 && preg_match('#invalid_token.+?access token#', $response->getHeader())) {
             $this->refreshAccessToken();
