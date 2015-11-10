@@ -9,8 +9,8 @@ namespace Loula;
 
 abstract class OAuthClient extends HttpClient
 {
-    private $accessToken = null;
-    private $refreshToken = null;
+    protected $accessToken = null;
+    protected $refreshToken = null;
     private $observers = null;
 
     public function __construct($accessToken = null , $refreshToken = null, $observers = null)
@@ -79,5 +79,21 @@ abstract class OAuthClient extends HttpClient
             throw new Exception ($response->getHttpCode(), $response->getHeader(), $response->getBody(), $response->getInfo());
         }
         return $response;
+    }
+
+    /**
+     * @return null
+     */
+    public function getAccessToken()
+    {
+        return $this->accessToken;
+    }
+
+    /**
+     * @return null
+     */
+    public function getRefreshToken()
+    {
+        return $this->refreshToken;
     }
 }
