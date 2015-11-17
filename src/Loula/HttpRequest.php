@@ -39,6 +39,7 @@ class HttpRequest
     public function addParam($key, $value) {
         $this->params[$key] = $value;
     }
+
     public function setHandle ($handler)
     {
         $this->handle = $handler;
@@ -147,6 +148,36 @@ class HttpRequest
         }
         $options[CURLOPT_URL] = $url;
         return $options;
+    }
+
+    public function getFiles()
+    {
+        return $this->files;
+    }
+
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
+
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
+    public function getObservers()
+    {
+        return $this->observers;
+    }
+
+    public function getParams()
+    {
+        return $this->params;
+    }
+
+    public function getUrl()
+    {
+        return $this->url;
     }
 }
 
