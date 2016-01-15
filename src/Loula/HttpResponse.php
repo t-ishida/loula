@@ -14,8 +14,8 @@ class HttpResponse {
         $this->info = $info;
         $this->content = $content;
         $responses = explode("\r\n\r\n", $content);
-        $this->body = array_pop($responses);
-        $this->header = array_pop($responses);
+        $this->header = array_shift($responses);
+        $this->body = implode("\r\n\r\n", $responses);
     }
 
     /**
