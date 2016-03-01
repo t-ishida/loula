@@ -24,7 +24,7 @@ class HttpRequest
         if ($method !== 'GET' && $method !== 'POST' && $method !== 'DELETE' && $method !== 'PUT') {
             throw new \RuntimeException('invalid method:' . $method);
         }
-        if ($params && !is_array($params)) {
+        if ($params && !is_array($params) && !is_scalar($params)) {
             throw new \InvalidArgumentException('$params wants array');
         }
 
