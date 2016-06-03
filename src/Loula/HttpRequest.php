@@ -9,6 +9,7 @@ class HttpRequest
     private $observers = array();
     private $handle = null;
     private $headers = null;
+    private $proxy = null;
     private static $CURL_OPTIONS = array(
         CURLOPT_CONNECTTIMEOUT => 10,
         CURLOPT_RETURNTRANSFER => true,
@@ -18,7 +19,7 @@ class HttpRequest
         CURLOPT_FOLLOWLOCATION => 1,
     );
 
-    public function __construct ($method, $url, $params = null, $files = null, $headers = null, $observers = null)
+    public function __construct ($method, $url, $params = null, $files = null, $headers = null, $observers = null, $proxy = null)
     {
         $method = strtoupper($method);
         if ($method !== 'GET' && $method !== 'POST' && $method !== 'DELETE' && $method !== 'PUT') {
@@ -34,6 +35,7 @@ class HttpRequest
         $this->files = $files ?: array();
         $this->observers = $observers ?: array();
         $this->headers = $headers ?: array();
+        $this->proxy = $proxy;
     }
 
     public function addParam($key, $value) {
@@ -65,13 +67,12 @@ class HttpRequest
         $files = $this->files;
         $headers = $this->headers;
         $options = self::$CURL_OPTIONS;
-        if (is_array($options)) {
-            foreach ($options as $key => $val) {
-                if (!is_numeric($key)) continue;
-                if (!isset($options[$key])) $options[$key] = $val;
-            }
-
+        foreach ($options as $key => $val) {
+            if (!is_numeric($key)) continue;
+            if (!isset($options[$key])) $options[$key] = $val;
         }
+        $this->proxy && $options[CURLOPT_PROXY] = $this->proxy;
+
         if ($method == 'GET') {
             $query = null;
             if (is_array($params)) {

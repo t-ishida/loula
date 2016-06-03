@@ -7,7 +7,7 @@ namespace Loula;
 class HttpRequestTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function testBuildCurlOptions()
+    public function testBuildCurlOptionsGET()
     {
         $this->assertEquals(array(
             CURLOPT_CONNECTTIMEOUT => 10,
@@ -28,7 +28,10 @@ class HttpRequestTest extends \PHPUnit_Framework_TestCase
             array(),
             array('header1', 'header2')
         ))->toArray());
+    }
 
+    public function testBuildCurlOptionsGETWithQueryString() 
+    {
         $this->assertEquals(array(
             CURLOPT_CONNECTTIMEOUT => 10,
             CURLOPT_RETURNTRANSFER => true,
@@ -48,6 +51,9 @@ class HttpRequestTest extends \PHPUnit_Framework_TestCase
             array(),
             array('header1', 'header2')
         ))->toArray());
+    }
+    public function testBuildCurlOptionsPOST() 
+    {
         $this->assertEquals(array(
             CURLOPT_CONNECTTIMEOUT => 10,
             CURLOPT_RETURNTRANSFER => true,
@@ -63,7 +69,10 @@ class HttpRequestTest extends \PHPUnit_Framework_TestCase
             'http://hoge/fuga.html',
             array('name' => 'value')
         ))->toArray());
-
+    }
+    
+    public function testBuildCurlOptionsDELETE() 
+    {
         $this->assertEquals(array(
             CURLOPT_CONNECTTIMEOUT => 10,
             CURLOPT_RETURNTRANSFER => true,
@@ -79,7 +88,10 @@ class HttpRequestTest extends \PHPUnit_Framework_TestCase
             'http://hoge/fuga.html',
             array('name' => 'value')
         ))->toArray());
-
+    }
+    
+    public function testBuildCurlOptionsPUT() 
+    {
         $this->assertEquals(array(
             CURLOPT_CONNECTTIMEOUT => 10,
             CURLOPT_RETURNTRANSFER => true,
@@ -96,7 +108,31 @@ class HttpRequestTest extends \PHPUnit_Framework_TestCase
             array('name' => 'value')
         ))->toArray());
     }
-
+    
+    public function testBuildCurlOptionsWithProxy() 
+    {
+        $this->assertEquals(array(
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HEADER => 1,
+            CURLOPT_TIMEOUT => 60,
+            CURLOPT_USERAGENT => 'Loula-WebClient',
+            CURLOPT_URL => 'http://hoge/fuga.html',
+            CURLOPT_CUSTOMREQUEST => 'PUT',
+            CURLOPT_POSTFIELDS => http_build_query(array('name' => 'value'), null, '&'),
+            CURLOPT_FOLLOWLOCATION => 1,
+            CURLOPT_PROXY => 'http://proxy.proxy.proxy',
+        ), (new HttpRequest(
+            'PUT',
+            'http://hoge/fuga.html',
+            array('name' => 'value'),
+            null,
+            null,
+            null,
+            'http://proxy.proxy.proxy'
+        ))->toArray());
+    }
+    
     public function testBuildCurlOptionsWithFiles()
     {
         $result = (new HttpRequest('POST', 'https://hoge.fuga.com/file_upload', array('hoge' => 'fuga'), array(
